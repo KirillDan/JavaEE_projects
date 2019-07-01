@@ -1,0 +1,67 @@
+@font-face{
+	font-family: MPLUS1p-Light;
+	src: url(Fonts/MPLUS1p-Light.ttf);
+}
+@font-face{
+	font-family: MPLUS1p-Bold;
+	src: url(Fonts/MPLUS1p-Bold.ttf);
+}
+@font-face{
+	font-family: MPLUS1p-Medium;
+	src: url(Fonts/MPLUS1p-Medium.ttf);
+}
+
+:root{
+	box-sizing: border-box;
+}
+*,::before,::after{
+	box-sizing: inherit;
+}
+body{
+	padding: 0rem;
+	width: 100vw;
+	margin: 0rem;
+}
+.footer-element{
+	display: flex;
+	padding: 0rem;
+	margin: 0rem;
+}
+.footer-element>img{
+	width: 26.71875vw;
+	height: 4.6875vw;
+	margin-left: 4.84375vw;
+	margin-top: 2.3vw;
+	margin-bottom: 2.3vw;
+	margin-right: 1.7vw;
+}
+.footer-element>div{
+	background: rgba(42, 42, 42, 0.9);
+	display: flex;
+	padding: 0rem;
+	margin: 0rem;
+	width: 66.7375vw;
+}
+.footer-element>div>em:nth-child(n){
+	padding: 0rem;
+	margin: 0rem;
+	margin-left: 6.77vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+.footer-element>div>em:nth-child(1){
+	margin-left: 3.5416667vw;
+}
+.footer-element>div>em>em{
+	padding: 0rem;
+	margin: 0rem;
+	color: #ffffff;
+	font-family: MPLUS1p-Medium;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.14583333vw;
+	line-height:1vw;
+	display: inline;
+}

@@ -1,0 +1,143 @@
+
+@font-face{
+	font-family: MPLUS1p-Light;
+	src: url(Fonts/MPLUS1p-Light.ttf);
+}
+@font-face{
+	font-family: MPLUS1p-Bold;
+	src: url(Fonts/MPLUS1p-Bold.ttf);
+}
+
+:root{
+	box-sizing: border-box;
+}
+*,::before,::after{
+	box-sizing: inherit;
+}
+.media-card{
+	width: 19.53125vw;
+    height: 32.0833333vw;
+    box-shadow: inset 0px 0.208333333vw 0.208333333vw rgba(0, 0, 0, 0.25);
+    border-radius: 1.30208333vw;
+    padding: 0vw;
+}
+.media-card-images{
+    margin: 0vw;
+    padding: 0vw;
+    width: 19.3229167vw;
+    height: 21.40625vw;
+    margin-left: 0.104166667vw;
+    margin-right: 0.104166667vw;
+    margin-top: 0.104166667vw;
+    margin-bottom: 0vw;
+    z-index: 3;
+    background-image: url(../img/dt1990.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    border-radius: 1.30208333vw; 
+}
+.media-card-image{
+	width: 2.60416667vw;
+    height: 2.60416667vw;
+    object-fit: cover;
+    position: relative;
+    left: 0.0vw;
+    top: 19.5vw;
+    margin-left: 0vw;
+    margin-right: 0.364583333vw;
+    margin-top: 0vw;
+    margin-bottom:0vw;
+    z-index: 5;
+    box-shadow: 0vw 0.104166667vw 0.104166667vw rgba(0, 0, 0, 0.25);
+    float: right;
+    border-radius: 25px;
+    opacity: 1;
+}
+.media-card-image + .media-card-image{
+    margin-right: 0.364583333vw;
+}
+.media-card-body{
+	position: relative;
+	top:;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	padding-left: 1.40625vw;
+	padding-right: 1.40625vw;
+	margin-top: 0.95vw;
+}
+.media-card-body-firm{
+	margin-top: 0rem;
+	margin-bottom: 0rem;
+	font-family: MPLUS1p-Light;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 2.08333333vw;
+    line-height: 3.07291667vw;
+    letter-spacing: 0.104166667vw;
+    color: #000000;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 100%;
+    float:left;
+}
+.media-card-body-name{
+	margin-top: 0rem;
+	margin-bottom: 0rem;
+	font-family: MPLUS1p-Light;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 2.08333333vw;
+    line-height: 3.07291667vw;
+    letter-spacing: 0.104166667vw;
+    color: #000000;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 59%;
+    float:left;
+}
+.media-card-body-detail{
+	font-family: MPLUS1p-Bold;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.1458333vw;
+    letter-spacing: 0.0572916667vw;
+    color: #0085FF;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 41%;
+}
+.media-card-body>hr{
+	flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 100%;
+    background-color: #000000;
+    height: 0.0572916667vw;
+    border: none;
+    margin-top: 0.2vw;
+    margin-bottom: 0.5vw;
+}
+.media-card-body-buy{
+	font-family: MPLUS1p-Bold;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.1458333vw;
+    letter-spacing: 0.0572916667vw;
+    color: #0085FF;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 60%;
+    float:left;
+}
+.media-card-body-price{
+	font-family: MPLUS1p-Light;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 1.1458333vw;
+    letter-spacing: 0.0572916667vw;
+    color: #000000
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 40%;
+}
