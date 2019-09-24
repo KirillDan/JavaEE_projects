@@ -200,6 +200,17 @@
         	<artifactId>jboss-servlet-api_4.0_spec</artifactId>
         	<version>1.0.0.Final</version>
         </dependency>
+        <dependency>
+        	<groupId>jakarta.json.bind</groupId>
+        	<artifactId>jakarta.json.bind-api</artifactId>
+       		<version>1.0.1</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.eclipse</groupId>
+        	<artifactId>yasson</artifactId>
+        	<version>1.0.3</version>
+        	<scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

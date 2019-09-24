@@ -40,7 +40,7 @@ public class ManagerEntity implements Serializable {
 	
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name="order_entity_manager")
-	List<OrderEntity> listOrderEntity1;
+	List<OrderEntity> listOrderEntity;
 	
 	public Long getManagerId() {
 		return managerId;

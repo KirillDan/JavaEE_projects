@@ -1,6 +1,12 @@
 package Servlet;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -15,13 +21,22 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.Request;
 
+import EJB.CartSessionEJB;
+import EJB.DataForPurchaseEJB;
+import EJB.PagesEJB;
+import EJB.SingletonEJB;
 import EJB.Test;
 import EJB.TestAdminEJB;
+import Entitys.AddressEntity;
 import Entitys.CustomerEntity;
 import Entitys.ManagerEntity;
 import Entitys.OrderEntity;
 import Entitys.OrderProductEntity;
+import Logic.ArrayListBuilder;
+import Logic.CustomerEntityComparator;
 import PagesEntitys.BlockEntity;
 import PagesEntitys.ElementEntity;
 import PagesEntitys.ImgEntity;
@@ -36,25 +51,23 @@ import ProductEntitys.ProductEntity;
  * Servlet implementation class Servlet
  */
 @WebServlet(name = "ServletTestJSP", urlPatterns = {
-        "/ServletTestJSP" ,"/Delivery","/AboutCompany","/Contacts","/Catalog","/Product"})
+        "/ServletTestJSP" ,"/Delivery","/AboutCompany","/Contacts","/Catalog","/Product","/Cart",
+        "/Login","/Registration","/OrderForm","/Cabinet","/ProcessingOrder","/ToManagerOrder","/PayOrder",
+        "/FinishedOrder","/FailedPayment","/SuccessfulPayment","/SuccessfulRegistration","/AdministratorAllUsers",
+        "/Exit","/BankSite","/TestFile","/NonPayOrder","AdministratorAllOrders","/AdministratorAllNonPayOrders",
+        "/AdministratorAllPayOrders","/AdministratorAllProcessingOrders","/AdministratorAllTransferedManagerOrders","/AdministratorAllClosedOrders",
+        "/AdministratorCabinet","/AdministratorProduct","/AdministratorOrders","/AdministratorCustomers",
+        "/AllOrders"})
 public class Servlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor. 
      */
-    public Servlet() {
-        // TODO Auto-generated constructor stub
-    }
-
+  
 EntityManagerFactory emf;
 //////////////////////Entitys
-	CustomerEntity ce;
-	CustomerEntity ce2;
-	ManagerEntity me;
-	OrderEntity oe;
-	OrderProductEntity lop1;
-	OrderProductEntity lop2;
+
 ///////////////////////////////PagesEntitys
 	PagesEntity pages;
 	PageEntity page;
@@ -134,6 +147,86 @@ EntityManagerFactory emf;
 	TxtEntity text71;
 	TxtEntity text72;
 	TxtEntity text73;
+	
+	BlockEntity block8;
+	ElementEntity element80;
+	ElementEntity element81;
+	ElementEntity element82;
+	ElementEntity element83;
+	ElementEntity element84;
+	ElementEntity element85;
+	ElementEntity element86;
+	ElementEntity element87;
+	ElementEntity element88;
+	ElementEntity element89;
+	TxtEntity text80;
+	TxtEntity text81;
+	TxtEntity text82;
+	TxtEntity text83;
+	TxtEntity text84;
+	TxtEntity text85;
+	TxtEntity text86;
+	TxtEntity text87;
+	TxtEntity text88;
+	TxtEntity text89;
+	
+	BlockEntity block9;
+	ElementEntity element90;
+	ElementEntity element91;
+	ElementEntity element92;
+	ElementEntity element93;
+	ElementEntity element94;
+	TxtEntity text90;
+	TxtEntity text91;
+	TxtEntity text92;
+	TxtEntity text93;
+	TxtEntity text94;
+	
+	BlockEntity block10;
+	ElementEntity element100;
+	ElementEntity element101;
+	ElementEntity element102;
+	ElementEntity element103;
+	ElementEntity element104;
+	TxtEntity text100;
+	TxtEntity text101;
+	TxtEntity text102;
+	TxtEntity text103;
+	TxtEntity text104;
+	
+	BlockEntity block11;
+	ElementEntity element111;
+	TxtEntity text111;
+	
+	BlockEntity block12;
+	ElementEntity element121;
+	TxtEntity text121;
+	
+	BlockEntity block13;
+	ElementEntity element131;
+	TxtEntity text131;
+	
+	BlockEntity block14;
+	ElementEntity element141;
+	ElementEntity element142;
+	ElementEntity element143;
+	ElementEntity element144;
+	ElementEntity element145;
+	ElementEntity element146;
+	ElementEntity element146a;
+	ElementEntity element147;
+	ElementEntity element147a;
+	ElementEntity element148;
+	TxtEntity text141;
+	TxtEntity text142;
+	TxtEntity text143;
+	TxtEntity text144;
+	TxtEntity text145;
+	TxtEntity text146;
+	TxtEntity text146a;
+	TxtEntity text147;
+	TxtEntity text147a;
+	TxtEntity text148;
 
 	/////////////////////////////ProductEntitys
 	ProductEntity product;
@@ -170,27 +263,96 @@ EntityManagerFactory emf;
 	TxtEntity textmain51;
 	ImgEntity imgmain52;
 	
+	///////////////////////////////////////
+	List<ProductEntity> listProductEntity;
+	Long productId;
+	
 	@EJB
 	Test ejb;
 	@EJB
 	TestAdminEJB adminEJB;
-
+	@EJB
+	PagesEJB pagesEJB;
+	@EJB
+	CartSessionEJB cartSessionEJB;
+	@EJB
+	SingletonEJB singletonEJB;
+	@EJB
+	DataForPurchaseEJB dataForPurchaseEJB;
 
 	/**
 	 * @see Servlet#init(ServletConfig)
 	 */
-	public void init(ServletConfig config) throws ServletException {}
+	  public Servlet() {
+	    	
+	    }
+	  
+	public void init(ServletConfig config) throws ServletException {
+		if(singletonEJB.page == false) {
+			insertEntitys();
+			creatingEntitys();
+			singletonEJB.page = true;
+		}
+		//CustomerEntity ce;
+		//Set<CustomerEntity> setCustomerEntity = new TreeSet(new CustomerEntityComparator());
+		ManagerEntity me;
+		OrderEntity oe;
+		OrderProductEntity lop1;
+		OrderProductEntity lop2;
+		AddressEntity adr;
+	/////////////////////////
+		me = new ManagerEntity("ИмяМенеджера","ФамилияМенеджера","Менеджер@mail.com","456789","Москва","Садовая",5,4,"9000000000");
+		//oe = new OrderEntity("22.06.19",true,true,true,false,200.0, 0);
+		//lop1 = new OrderProductEntity(100.0,5); 
+		//lop2 = new OrderProductEntity(100.0,1);
+		//adr = new AddressEntity("Moskow","Sadovaya",5,20,"900000000","111111","MyComment");
+		
+	////////////	
+		//for(CustomerEntity ce : setCustomerEntity) {
+		for(int i = 0 ; i < 10 ; i++) {
+			String CustomerName = "Вася";
+			String CustomerSecondName = "Пупкин";
+			String email; String email1 = "VasyaPupkin"; String email2 ="@mail.com";
+			String password = "123456";
+			CustomerName = CustomerName + "[" + i + "]";
+			CustomerSecondName = CustomerSecondName + "[" + i +"]";
+			email = email1 + "[" + i + "]" + email2;
+/*			ejb.createComplex(new CustomerEntity(CustomerName,CustomerSecondName,email,"123456","Москва","Садовая",5,4,"9000000000","111111"),
+					 		new OrderEntity("22.06.19",true,true,true,false,200.0, 0),
+					 		new ArrayListBuilder().adds(new OrderProductEntity(100.0,5)).adds(new OrderProductEntity(100.0,1)).buildArrayList(),
+					 		new AddressEntity("Moskow","Sadovaya",5,20,"900000000","111111","MyComment"));
+*/			ejb.createComplexTest(new CustomerEntity(CustomerName,CustomerSecondName,email,"123456","Москва","Садовая",5,4,"9000000000","111111"),
+									new ArrayListBuilder().
+										adds(new OrderEntity("22.06.19",false,false,false,false,200.0, 0)).
+										adds(new OrderEntity("22.06.19",true,false,false,false,200.0, 0)).
+										adds(new OrderEntity("22.06.19",true,true,false,false,200.0, 0)).
+										adds(new OrderEntity("22.06.19",true,true,true,false,200.0, 0)).
+										adds(new OrderEntity("22.06.19",true,true,true,true,200.0, 0)).
+										buildArrayList()
+								);
+			CustomerName = "";
+			CustomerSecondName = "";
+			email1 = "";
+			email2 = "";
+			email = "";
+		}
+	}
 		
 		
-		public void insertEntitys(){
+	public void insertEntitys(){
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////Create
 	///////////////////////Entitys
-		ce = new CustomerEntity("Вася","Пупкин","ВасяПупкин@mail.com","123456","Москва","Садовая",5,4,"9000000000");
-		me = new ManagerEntity("ИмяМенеджера","ФамилияМенеджера","Менеджер@mail.com","456789","Москва","Садовая",5,4,"9000000000");
-		oe = new OrderEntity("22.06.19",true,true,false,false,200.0, 0);
-		lop1 = new OrderProductEntity(100.0,5); 
-		lop2 = new OrderProductEntity(100.0,1); 
+		
+		/*ce.addOrderEntity(oe);
+		oe.addOrderProductEntity(lop1);
+		oe.addOrderProductEntity(lop2);
+		oe.setManagerEntity(null);
+		oe.setCustomerEntity(ce);
+		oe.setAddressEntity(adr);
+		lop1.setProduct(null);
+		lop2.setProduct(null);
+		*/
 	///////////////////////////////PagesEntitys
 		pages = new  PagesEntity(); 
 		page = new  PageEntity();
@@ -254,6 +416,47 @@ EntityManagerFactory emf;
 		element71 = new ElementEntity();	text71 = new TxtEntity();
 		element72 = new ElementEntity();	text72 = new TxtEntity();
 		element73 = new ElementEntity();	text73 = new TxtEntity();
+		block8 = new BlockEntity();
+		element80 = new ElementEntity();	text80 = new TxtEntity();
+		element81 = new ElementEntity();	text81 = new TxtEntity();
+		element82 = new ElementEntity();	text82 = new TxtEntity();
+		element83 = new ElementEntity();	text83 = new TxtEntity();
+		element84 = new ElementEntity();	text84 = new TxtEntity();
+		element85 = new ElementEntity();	text85 = new TxtEntity();
+		element86 = new ElementEntity();	text86 = new TxtEntity();
+		element87 = new ElementEntity();	text87 = new TxtEntity();
+		element88 = new ElementEntity();	text88 = new TxtEntity();
+		element89 = new ElementEntity();	text89 = new TxtEntity();
+		block9 = new BlockEntity();
+		element90 = new ElementEntity();	text90 = new TxtEntity();
+		element91 = new ElementEntity();	text91 = new TxtEntity();
+		element92 = new ElementEntity();	text92 = new TxtEntity();
+		element93 = new ElementEntity();	text93 = new TxtEntity();
+		element94 = new ElementEntity();	text94 = new TxtEntity();
+		block10 = new BlockEntity();
+		element100 = new ElementEntity();	text100 = new TxtEntity();
+		element101 = new ElementEntity();	text101 = new TxtEntity();
+		element102 = new ElementEntity();	text102 = new TxtEntity();
+		element103 = new ElementEntity();	text103 = new TxtEntity();
+		element104 = new ElementEntity();	text104 = new TxtEntity();
+		block11= new BlockEntity();
+		element111 = new ElementEntity();	text111 = new TxtEntity();
+		block12 = new BlockEntity();
+		element121 = new ElementEntity();	text121 = new TxtEntity();
+		block13 = new BlockEntity();
+		element131 = new ElementEntity();	text131 = new TxtEntity();
+		block14 = new BlockEntity();
+		element141 = new ElementEntity();	text141 = new TxtEntity();
+		element142 = new ElementEntity();	text142 = new TxtEntity();
+		element143 = new ElementEntity();	text143 = new TxtEntity();
+		element144 = new ElementEntity();	text144 = new TxtEntity();
+		element145 = new ElementEntity();	text145 = new TxtEntity();
+		element146 = new ElementEntity();	text146 = new TxtEntity();
+		element146a = new ElementEntity();	text146a = new TxtEntity();
+		element147 = new ElementEntity();	text147 = new TxtEntity();
+		element147a = new ElementEntity();	text147a = new TxtEntity();
+		element148 = new ElementEntity();	text148 = new TxtEntity();
+		
 		/////////////////////////////////////////mainPageEntitys
 		pagemain = new  PageEntity();
 		blockmain = new BlockEntity();
@@ -319,6 +522,46 @@ EntityManagerFactory emf;
 		element71.setNumber("1");	text71.setText("Все права защищены");
 		element72.setNumber("2");	text72.setText("Super&audio");
 		element73.setNumber("3");	text73.setText("2018");
+		block8.setNumber("validator-firm");
+		element80.setNumber("0");	text80.setText("Производители");
+		element81.setNumber("1");	text81.setText("Beyerdynamic");
+		element82.setNumber("2");	text82.setText("AKG");
+		element83.setNumber("3");	text83.setText("Audio-technica");
+		element84.setNumber("4");	text84.setText("Sennheiser");
+		element85.setNumber("5");	text85.setText("Sony");
+		element86.setNumber("6");	text86.setText("1MORE");
+		element87.setNumber("7");	text87.setText("Pioneer");
+		element88.setNumber("8");	text88.setText("HiFiMAN");
+		element89.setNumber("9");	text89.setText("Koss");
+		block9.setNumber("validator-type-headphones");
+		element90.setNumber("0");	text90.setText("Тип наушников");
+		element91.setNumber("1");	text91.setText("Мониторные");
+		element92.setNumber("2");	text92.setText("Накладные");
+		element93.setNumber("3");	text93.setText("Вкладыши");
+		element94.setNumber("4");	text94.setText("Затычки");
+		block10.setNumber("validator-tdh");
+		element100.setNumber("0");	text100.setText("КНИ");
+		element101.setNumber("1");	text101.setText("0,02 - 0,04 %");
+		element102.setNumber("2");	text102.setText("0,05 - 0,07 %");
+		element103.setNumber("3");	text103.setText("0,07 - 1 %");
+		element104.setNumber("4");	text104.setText("> 1 %");
+		block11.setNumber("text-see-more");
+		element111.setNumber("1");	text111.setText("Показать еще");
+		block12.setNumber("description");
+		element121.setNumber("1");	text121.setText("Описание");
+		block13.setNumber("characteristics");
+		element131.setNumber("1");	text131.setText("Технические характеристики");
+		block14.setNumber("media-object");
+		element141.setNumber("1");		text141.setText("Профессиональные наушники");
+		element142.setNumber("2");		text142.setText("Скидка 5% зарегестрированным покупателям");
+		element143.setNumber("3");		text143.setText("Товар в наличии");
+		element144.setNumber("4");		text144.setText("Товара нет в наличии");
+		element145.setNumber("5");		text145.setText("Нашли дешевле?");
+		element146.setNumber("6");		text146.setText("Положить");
+		element146a.setNumber("6a");	text146a.setText("в корзину");
+		element147.setNumber("7");		text147.setText("Купить");
+		element147a.setNumber("7a");	text147a.setText("в один клик");
+		element148.setNumber("8");		text148.setText("руб");
 		///////////////////////////////////////mainpage
 		pagemain.setName("main");
 		blockmain.setNumber("media-card-container");	
@@ -340,7 +583,7 @@ EntityManagerFactory emf;
 		elementmain52.setNumber("2");	imgmain52.setSrc("img/Преимущества.png");
 		
 		
-		
+	
 		
 		
 /////////////////////////////////////////////////////////////////////////////////////
@@ -386,6 +629,47 @@ EntityManagerFactory emf;
 		block7.addElementEntity(element71);	element71.setTxtEntity(text71);
 		block7.addElementEntity(element72);	element72.setTxtEntity(text72);
 		block7.addElementEntity(element73);	element73.setTxtEntity(text73);
+		page.addBlockEntity(block8);
+		block8.addElementEntity(element80);	element80.setTxtEntity(text80);
+		block8.addElementEntity(element81);	element81.setTxtEntity(text81);
+		block8.addElementEntity(element82);	element82.setTxtEntity(text82);
+		block8.addElementEntity(element83);	element83.setTxtEntity(text83);
+		block8.addElementEntity(element84);	element84.setTxtEntity(text84);
+		block8.addElementEntity(element85);	element85.setTxtEntity(text85);
+		block8.addElementEntity(element86);	element86.setTxtEntity(text86);
+		block8.addElementEntity(element87);	element87.setTxtEntity(text87);
+		block8.addElementEntity(element88);	element88.setTxtEntity(text88);
+		block8.addElementEntity(element89);	element89.setTxtEntity(text89);
+		page.addBlockEntity(block9);
+		block9.addElementEntity(element90);	element90.setTxtEntity(text90);
+		block9.addElementEntity(element91);	element91.setTxtEntity(text91);
+		block9.addElementEntity(element92);	element92.setTxtEntity(text92);
+		block9.addElementEntity(element93);	element93.setTxtEntity(text93);
+		block9.addElementEntity(element94);	element94.setTxtEntity(text94);
+		page.addBlockEntity(block10);
+		block10.addElementEntity(element100);	element100.setTxtEntity(text100);
+		block10.addElementEntity(element101);	element101.setTxtEntity(text101);
+		block10.addElementEntity(element102);	element102.setTxtEntity(text102);
+		block10.addElementEntity(element103);	element103.setTxtEntity(text103);
+		block10.addElementEntity(element104);	element104.setTxtEntity(text104);
+		page.addBlockEntity(block11);
+		block11.addElementEntity(element111);	element111.setTxtEntity(text111);
+		page.addBlockEntity(block12);
+		block12.addElementEntity(element121);	element121.setTxtEntity(text121);
+		page.addBlockEntity(block13);
+		block13.addElementEntity(element131);	element131.setTxtEntity(text131);
+		page.addBlockEntity(block14);
+		block14.addElementEntity(element141);	element141.setTxtEntity(text141);
+		block14.addElementEntity(element142);	element142.setTxtEntity(text142);
+		block14.addElementEntity(element143);	element143.setTxtEntity(text143);
+		block14.addElementEntity(element144);	element144.setTxtEntity(text144);
+		block14.addElementEntity(element145);	element145.setTxtEntity(text145);
+		block14.addElementEntity(element146);	element146.setTxtEntity(text146);
+		block14.addElementEntity(element146a);	element146a.setTxtEntity(text146a);
+		block14.addElementEntity(element147);	element147.setTxtEntity(text147);
+		block14.addElementEntity(element147a);	element147a.setTxtEntity(text147a);
+		block14.addElementEntity(element148);	element148.setTxtEntity(text148);
+		
 		/////////////////////////////////////////main
 		pagemain.addBlockEntity(blockmain);
 		blockmain.addElementEntity(elementmain);	elementmain.setTxtEntity(textmain);
@@ -405,21 +689,21 @@ EntityManagerFactory emf;
 		blockmain5.addElementEntity(elementmain51);	elementmain51.setTxtEntity(textmain51);
 		blockmain5.addElementEntity(elementmain52);	elementmain52.setImgEntity(imgmain52);
 		
-		
+	
 //page.getBlockEntity("media-card").getElementEntity("1").getTxtEntity().getText();
 		//pagemain.getBlockEntity("preference").getElementEntity("2").getImgEntity().getSrc();
 //pagemain.getBlockEntity("media-card-container").getBlockEntity("media-card").getElementEntitySet();	
 	}
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(request.getAttribute("page") == null) {
-			insertEntitys();
-		}
-		ejb.createCustomer(ce);
-		ce2 = ejb.getCustomerEntity();
+		
+	public void creatingEntitys() {
+		//ejb.createCustomer(ce);
+		//ejb.createOrder(oe);
+		//ejb.createOrderProduct(lop1);
+//////		ejb.createComplex(ce, oe, lop1, adr);
+		
+		//ejb.createAddress(adr);
+		//ce/oe/lop1/lop2/adr
+		//ce2 = ejb.getCustomerEntity("VasyaPupkin1mailcom","123456");
 		////////////////////////Product
 		adminEJB.createProductEntity(product);
 		adminEJB.createProductEntity(product2);
@@ -501,6 +785,87 @@ EntityManagerFactory emf;
 		adminEJB.createElementEntity(element72);
 		adminEJB.createElementEntity(element73);
 		adminEJB.createBlockEntity(block7);
+		/////////////////////////////////validator-firm
+		adminEJB.createTxtEntity(text80);
+		adminEJB.createTxtEntity(text81);
+		adminEJB.createTxtEntity(text82);
+		adminEJB.createTxtEntity(text83);
+		adminEJB.createTxtEntity(text84);
+		adminEJB.createTxtEntity(text85);
+		adminEJB.createTxtEntity(text86);
+		adminEJB.createTxtEntity(text87);
+		adminEJB.createTxtEntity(text88);
+		adminEJB.createTxtEntity(text89);
+		adminEJB.createElementEntity(element80);
+		adminEJB.createElementEntity(element81);
+		adminEJB.createElementEntity(element82);
+		adminEJB.createElementEntity(element83);
+		adminEJB.createElementEntity(element84);
+		adminEJB.createElementEntity(element85);
+		adminEJB.createElementEntity(element86);
+		adminEJB.createElementEntity(element87);
+		adminEJB.createElementEntity(element88);
+		adminEJB.createElementEntity(element89);
+		adminEJB.createBlockEntity(block8);
+		///////////////////////////////////validator-type-headphones
+		adminEJB.createTxtEntity(text90);
+		adminEJB.createTxtEntity(text91);
+		adminEJB.createTxtEntity(text92);
+		adminEJB.createTxtEntity(text93);
+		adminEJB.createTxtEntity(text94);
+		adminEJB.createElementEntity(element90);
+		adminEJB.createElementEntity(element91);
+		adminEJB.createElementEntity(element92);
+		adminEJB.createElementEntity(element93);
+		adminEJB.createElementEntity(element94);
+		adminEJB.createBlockEntity(block9);
+		///////////////////////////////////validator-tdh
+		adminEJB.createTxtEntity(text100);
+		adminEJB.createTxtEntity(text101);
+		adminEJB.createTxtEntity(text102);
+		adminEJB.createTxtEntity(text103);
+		adminEJB.createTxtEntity(text104);
+		adminEJB.createElementEntity(element100);
+		adminEJB.createElementEntity(element101);
+		adminEJB.createElementEntity(element102);
+		adminEJB.createElementEntity(element103);
+		adminEJB.createElementEntity(element104);
+		adminEJB.createBlockEntity(block10);
+		//////////////////////////////////////text-see-more
+		adminEJB.createTxtEntity(text111);
+		adminEJB.createElementEntity(element111);
+		adminEJB.createBlockEntity(block11);
+		////////////////////////////////////////description
+		adminEJB.createTxtEntity(text121);
+		adminEJB.createElementEntity(element121);
+		adminEJB.createBlockEntity(block12);
+		////////////////////////////////////////characteristic
+		adminEJB.createTxtEntity(text131);
+		adminEJB.createElementEntity(element131);
+		adminEJB.createBlockEntity(block13);
+		///////////////////////////////////////media-object
+		adminEJB.createTxtEntity(text141);
+		adminEJB.createTxtEntity(text142);
+		adminEJB.createTxtEntity(text143);
+		adminEJB.createTxtEntity(text144);
+		adminEJB.createTxtEntity(text145);
+		adminEJB.createTxtEntity(text146);
+		adminEJB.createTxtEntity(text146a);
+		adminEJB.createTxtEntity(text147);
+		adminEJB.createTxtEntity(text147a);
+		adminEJB.createTxtEntity(text148);
+		adminEJB.createElementEntity(element141);
+		adminEJB.createElementEntity(element142);
+		adminEJB.createElementEntity(element143);
+		adminEJB.createElementEntity(element144);
+		adminEJB.createElementEntity(element145);
+		adminEJB.createElementEntity(element146);
+		adminEJB.createElementEntity(element146a);
+		adminEJB.createElementEntity(element147);
+		adminEJB.createElementEntity(element147a);
+		adminEJB.createElementEntity(element148);
+		adminEJB.createBlockEntity(block14);
+		
 		
 		///////////////////////////////////////////mainpage____MediaCardContainer
 		adminEJB.createTxtEntity(textmain);
@@ -528,25 +893,132 @@ EntityManagerFactory emf;
 		pagemainTest=adminEJB.createPageEntity(pagemain);
 		pageTest = adminEJB.createPageEntity(page);
 		adminEJB.createPagesEntity(pages);
+	}
+	public void insertingAttibute(HttpServletRequest request,
+            HttpServletResponse response) {
+		if(listProductEntity == null){listProductEntity = pagesEJB.allProductEntitys();}
+		if(request.getAttribute("page") == null) {request.setAttribute("page", pageTest);}
+		if(request.getAttribute("pagemain") == null) {request.setAttribute("pagemain", pagemainTest);}
+		if(request.getAttribute("blockmain2") == null) {request.setAttribute("blockmain2", pagemain.getBlockEntity("media-card-container").getBlockEntity("media-card"));}
+		if(request.getAttribute("blockmain4") == null) {request.setAttribute("blockmain4", pagemain.getBlockEntity("media-card-container_2").getBlockEntity("media-card"));}
+		if(request.getAttribute("blockmainFirm") == null) {request.setAttribute("blockmainFirm", page.getBlockEntity("validator-firm"));}
+		if(request.getAttribute("blockmainTypeH") == null) {request.setAttribute("blockmainTypeH", page.getBlockEntity("validator-type-headphones"));}
+		if(request.getAttribute("blockmainTDH") == null) {request.setAttribute("blockmainTDH", page.getBlockEntity("validator-tdh"));}
+		if(request.getAttribute("listProductEntity") == null) {request.setAttribute("listProductEntity", listProductEntity);}	
+///////////////////////////////////////////////////////////////////////////////cartProducts
+		String cartProductId = request.getParameter("cartproductId");
+		if(cartProductId!=null) {cartSessionEJB.addProductEntityId(Long.valueOf(cartProductId));}
+		if(request.getAttribute("cartSessionEJB")==null) {request.setAttribute("cartSessionEJB", cartSessionEJB);}/////////////////////////////////////////////111111111111111111111111
+		System.out.println("Number of productId");
+		System.out.println(cartProductId);
+		String removeCartProductId = request.getParameter("removecartproductId");
+		if(removeCartProductId != null) {cartSessionEJB.removeProductEntityId(Long.valueOf(removeCartProductId));}
+		System.out.println(cartSessionEJB.sizeproductEntityIds());
+/////////////////////////////////////////TestEJB  -   Customer
+		if(request.getAttribute("test")==null) {request.setAttribute("test", ejb);}
+		
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if(singletonEJB.page == false) {
+			insertEntitys();
+			creatingEntitys();
+			singletonEJB.page = true;
+		}
+		insertingAttibute(request,response);
 		
 		
 		
         response.setContentType("text/html;charset=Windows-1251");
 		response.getWriter().append("Served at: ").append(request.getContextPath());
-		response.getWriter().append(ce2.getFirstname());
-		if(request.getAttribute("page") == null) {request.setAttribute("page", pageTest);}
-		if(request.getAttribute("pagemain") == null) {request.setAttribute("pagemain", pagemainTest);}
-		if(request.getAttribute("blockmain2") == null) {request.setAttribute("blockmain2", pagemain.getBlockEntity("media-card-container").getBlockEntity("media-card"));}
-		if(request.getAttribute("blockmain4") == null) {request.setAttribute("blockmain4", pagemain.getBlockEntity("media-card-container_2").getBlockEntity("media-card"));}
+		
+		
 		process(request, response);
+		
 	}
-
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if(singletonEJB.page == false) {
+			insertEntitys();
+			creatingEntitys();
+			singletonEJB.page = true;
+		}
+		insertingAttibute(request,response);
 		// TODO Auto-generated method stub
-		process(request, response);
+		String uri = request.getRequestURI();
+		int lastIndex = uri.lastIndexOf("/");
+		String action = uri.substring(lastIndex+1);
+		if("Login".equals(action)) {
+			
+				if(request.getSession().getAttribute("Login") != null) {
+					request.getSession().removeAttribute("Login");
+					request.getSession().removeAttribute("CustomerId");
+				}
+					String email = request.getParameter("email");
+					String password = request.getParameter("password");
+					CustomerEntity ceLog = ejb.getCustomerEntity(email, password);
+					if(ceLog != null && email != null && password != null) {
+						HttpSession session = request.getSession();
+						if(session.getAttribute("Login") == null) {session.setAttribute("Login", "Login");}
+						if(session.getAttribute("CustomerId") == null) {session.setAttribute("CustomerId", ceLog.getCustomerId());}
+					//	ejb.getCustomerEntity((Long) session.getAttribute("CustomerId")).getCustomerId();
+				}
+			request.getRequestDispatcher("jsp/LoginPage.jsp").forward(request, response);
+			
+		}
+		if("Registration".equals(action)) {
+			String firstname = request.getParameter("firstname");
+			String secondname = request.getParameter("secondname");
+			String email = request.getParameter("email");
+			String password = request.getParameter("password");
+			String sity = request.getParameter("sity");
+			String street = request.getParameter("street");
+			int house = Integer.parseInt(request.getParameter("house"));
+			int apartment = Integer.parseInt(request.getParameter("apartment"));
+			String phone = request.getParameter("phone");
+			String zipIndex = request.getParameter("zipindex");
+			if(firstname != null && secondname != null && email != null && password != null && sity != null && street != null && house > 0 && apartment > 0 && phone != null && zipIndex != null) {
+				if(ejb.getCustomerEntity(email) == null) {
+					CustomerEntity ceRegistration = new CustomerEntity(firstname, secondname, email, password, sity, street, house, apartment, phone, zipIndex);
+					ejb.createCustomer(ceRegistration);
+					request.getRequestDispatcher("jsp/SuccessfulRegistration.jsp").forward(request, response);
+				}else{
+					request.getRequestDispatcher("jsp/FailedRegistration.jsp").forward(request, response);
+				}
+			}
+		}
+		if("OrderForm".equals(action)) {
+			if(cartSessionEJB.getProductEntityIds().size() > 0) {
+				request.getRequestDispatcher("jsp/OrderForm.jsp").forward(request, response);
+			}else {
+				request.getRequestDispatcher("jsp/Cart.jsp").forward(request, response);
+			}			
+		}
+		if("BankSite".equals(action)) {
+			if(request.getSession().getAttribute("Login") != "Login") {request.getRequestDispatcher("jsp/LoginPage.jsp").forward(request, response);}
+			if(cartSessionEJB.sizeproductEntityIds() > 0 && dataForPurchaseEJB.setAddress(request)) {
+				List<Long> productEntityIds = cartSessionEJB.getProductEntityIds();
+				dataForPurchaseEJB.setCustomer((Long) request.getSession().getAttribute("CustomerId"));
+				dataForPurchaseEJB.setListOrderProductEntity(productEntityIds);
+				dataForPurchaseEJB.newOrder(productEntityIds);
+				dataForPurchaseEJB.recTransaction();
+				String bankUrl = "http://localhost:8080/IS_test_EJB/BankServlet/Pay?jsonParams=" 
+								+ cartSessionEJB.getTotalPriceJson() 
+								+ "&returnUrl=http://localhost:8080/IS_test_EJB/SuccessfulPayment"
+								+ "&failUrl=http://localhost:8080/IS_test_EJB/FailedPayment";
+				response.sendRedirect(bankUrl);
+			}else {
+				request.getRequestDispatcher("jsp/OrderForm.jsp").forward(request, response);
+			}
+
+		}
+		/*process(request, response);
+		*/
 	}
 	
 	private void process(HttpServletRequest request,
@@ -556,7 +1028,12 @@ EntityManagerFactory emf;
 		int lastIndex = uri.lastIndexOf("/");
 		String action = uri.substring(lastIndex+1);
 		String dispatchUrl = null;
-//"/Delivery","/AboutCompany","/Contacts","/Catalog","/Product"
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Session_Login_test
+		//HttpSession session = request.getSession();
+		//session.setAttribute("Login", "Login");
+		
+//////////////////////////////////////////////////////////////////////////////"/Delivery","/AboutCompany","/Contacts","/Catalog","/Product"
 		if("ServletTestJSP".equals(action)) {
 			dispatchUrl = "jsp/Test_JSP.jsp";
 		}else if("Delivery".equals(action)) {
@@ -568,10 +1045,68 @@ EntityManagerFactory emf;
 		}else if("Catalog".equals(action)) {
 			dispatchUrl = "jsp/Catalog.jsp";
 		}else if("Product".equals(action)) {
+			request.setAttribute("product", null);
+			this.productId = Long.parseLong(request.getParameter("productId"));
+			
+			request.setAttribute("product", pagesEJB.getProductEntityById(productId));
+			request.setAttribute("productId", this.productId);
 			dispatchUrl = "jsp/Product.jsp";
+		}else if("Cart".equals(action)) {
+			dispatchUrl = "jsp/Cart.jsp";
+		}else if("Login".equals(action)) {
+			dispatchUrl = "jsp/LoginPage.jsp";
+		}else if("Registration".equals(action)) {
+			dispatchUrl = "jsp/Registration.jsp";
+		}else if("Cabinet".equals(action)) {
+			dispatchUrl = "jsp/Cabinet.jsp";
+		}else if("ProcessingOrder".equals(action)) {
+			dispatchUrl = "jsp/ProcessingOrder.jsp";
+		}else if("ToManagerOrder".equals(action)) {
+			dispatchUrl = "jsp/ToManagerOrder.jsp";
+		}else if("PayOrder".equals(action)) {
+			dispatchUrl = "jsp/PayOrder.jsp";
+		}else if("FinishedOrder".equals(action)) {
+			dispatchUrl = "jsp/FinishedOrder.jsp";
+		}else if("AdministratorAllUsers".equals(action)) {
+			dispatchUrl = "jsp/AdministratorAllUsers.jsp";
+		}else if("SuccessfulPayment".equals(action)) {
+			dispatchUrl = "jsp/SuccessfulPayment.jsp";
+		}else if("TestFile".equals(action)) {
+			dispatchUrl = "jsp/TestFile.jsp";
+		}else if("NonPayOrder".equals(action)) {
+			dispatchUrl = "jsp/NonPayOrder.jsp";
+		}else if("AdministratorAllOrders".equals(action)){
+			dispatchUrl = "jsp/AdministratorAllOrders.jsp";
+		}else if("AdministratorAllNonPayOrders".equals(action)){
+			dispatchUrl = "jsp/AdministratorAllNonPayOrders.jsp";
+		}else if("AdministratorAllPayOrders".equals(action)){
+			dispatchUrl = "jsp/AdministratorAllPayOrders.jsp";
+		}else if("AdministratorAllProcessingOrders".equals(action)){
+			dispatchUrl = "jsp/AdministratorAllProcessingOrders.jsp";
+		}else if("AdministratorAllTransferedManagerOrders".equals(action)){
+			dispatchUrl = "jsp/AdministratorAllTransferedManagerOrders.jsp";
+		}else if("AdministratorAllClosedOrders".equals(action)){
+			dispatchUrl = "jsp/AdministratorAllClosedOrders.jsp";
+		}else if("AdministratorCabinet".equals(action)){
+			dispatchUrl = "jsp/AdministratorCabinet.jsp";
+		}else if("AdministratorProduct".equals(action)){
+			dispatchUrl = "jsp/AdministratorProduct.jsp";
+		}else if("AdministratorOrders".equals(action)){
+			dispatchUrl = "jsp/AdministratorOrders.jsp";
+		}else if("AdministratorCustomers".equals(action)){
+			dispatchUrl = "jsp/AdministratorCustomers.jsp";
+		}else if("AllOrders".equals(action)){
+			dispatchUrl = "jsp/AllOrders.jsp";
+		}else if("Exit".equals(action)) {
+				request.getSession().removeAttribute("Login");
+				request.getSession().removeAttribute("CustomerId");
+				dispatchUrl = "jsp/Test_JSP.jsp";
 		}
-		RequestDispatcher rd =
-                request.getRequestDispatcher(dispatchUrl);
+
+		
+		//"/AdministratorCabinet","/AdministratorProduct","/AdministratorOrders","/AdministratorCustomers"
+		//test.getCustomerEntity(session.getAttribute("CustomerId"))getListOrderEntity()
+		RequestDispatcher rd = request.getRequestDispatcher(dispatchUrl);
         rd.forward(request, response);
 	}
 

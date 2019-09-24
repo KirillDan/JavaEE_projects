@@ -1,0 +1,75 @@
+
+@font-face{
+	font-family: MPLUS1p-Light;
+	src: url(Fonts/MPLUS1p-Light.ttf);
+}
+@font-face{
+	font-family: MPLUS1p-Bold;
+	src: url(Fonts/MPLUS1p-Bold.ttf);
+}
+
+:root{
+	box-sizing: border-box;
+}
+*,::before,::after{
+	box-sizing: inherit;
+	--width-validator-variable: 1; 
+}
+body{
+    padding: 0rem;
+    margin: 0rem;
+}
+.validator-element{
+    margin:0rem;
+	width: calc(18.2291667vw * var(--width-validator-variable));
+    border-radius: calc(1.30208333vw * var(--width-validator-variable));
+    padding: 0rem;
+    box-shadow:0 0 0 calc(0.15625vw * var(--width-validator-variable)) rgba(42, 42, 42, 0.8);
+    padding-bottom: calc(2.5vw * var(--width-validator-variable));
+}
+.validator-element-header{   
+    background: rgba(42, 42, 42, 0.8);
+    border-radius: calc(1.04166667vw * var(--width-validator-variable));
+    padding: 1.92708333vw 4.27083333vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.validator-element-header>em{
+    display: block;
+    font-family: MPLUS1p-Light;
+    font-style: normal;
+    font-weight: 500;
+    font-size: calc(1.25vw * var(--width-validator-variable));
+    line-height: calc(1.875vw * var(--width-validator-variable));
+    color: #FFFFFF;
+}
+.validator-element-body{
+    display: flex;
+    flex-direction: column;
+    margin-top: calc(2.5vw * var(--width-validator-variable));
+    margin-left: calc(2.8125vw * var(--width-validator-variable));
+}
+.validator-element-body>em{
+    display: inline-block;
+    font-family: Mplus 1p;
+    font-style: normal;
+    font-weight: 500;
+    font-size: calc(1.25vw * var(--width-validator-variable));
+    line-height: calc(1.875vw * var(--width-validator-variable));
+    color: #000000;
+}
+.validator-element-body>em+em{
+    margin-top: calc(1vw * var(--width-validator-variable));
+}
+.validator-element-body>em>em:first-child{
+    display: inline-block;
+    background: #FFFFFF;
+    border: calc(0.104166667vw * var(--width-validator-variable)) solid #000000;
+    box-sizing: border-box;
+    width: calc(1.30208333vw * var(--width-validator-variable));
+    height: calc(1.30208333vw * var(--width-validator-variable));
+}
+.validator-element-body>em>em{
+    margin-right: calc(1.19791667vw * var(--width-validator-variable));
+}

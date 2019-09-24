@@ -15,7 +15,7 @@ public class OrderEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public OrderEntity() {
 	}
-	public OrderEntity(String date,Boolean processing,Boolean transferedManager,Boolean paid,Boolean closed,Double price,Integer discount) {
+	public OrderEntity(String date,Boolean paid,Boolean processing,Boolean transferedManager,Boolean closed,Double price,Integer discount) {
 		this.date  = date;
 		this.processing  = processing;
 		this.transferedManager  = transferedManager;
@@ -42,6 +42,9 @@ public class OrderEntity implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="order_to_customer_entity_id")
 	CustomerEntity customerEntity;
+	@OneToOne
+	@JoinColumn(name="order_to_address_entity_id")
+	AddressEntity addressEntity;
 	
 	public Long getOrderId() {
 		return orderId;
@@ -117,6 +120,15 @@ public class OrderEntity implements Serializable {
 	      }
 	      listOrderProductEntity.add(orderProductEntity);
 	      return orderProductEntity;
+	}
+	public void setListOrderProductEntity(List<OrderProductEntity> listOrderProductEntity) {
+		this.listOrderProductEntity = listOrderProductEntity;
+	}
+	public AddressEntity getAddressEntity() {
+		return addressEntity;
+	}
+	public void setAddressEntity(AddressEntity addressEntity) {
+		this.addressEntity = addressEntity;
 	}
    
 }
